@@ -1,49 +1,58 @@
 # Supply Chain Analysis
 
-تحليل أداء سلسلة التوريد — 5,000 طلب عبر 3 موردين، لسنة كاملة.
-
 ![preview](preview.jpg)
 
-**The question:** Where in the supply chain are we losing time and money —
-late deliveries, damaged goods, or a specific supplier?
+5,000 orders, three suppliers, one year. I wanted to know where the delays and
+the losses are actually coming from, and whether any one supplier is the cause.
 
-**What I did:**
-- Cleaned and modelled 3 raw tables (order details, order status, suppliers)
-- Loaded them into SQLite with a Python ETL script (`backend/etl.py`, standard
-  library only — no installs)
-- Wrote SQL to compute on-time rate, freight cost, damage rate, and return
-  rate — overall and broken down by supplier
+## What I found
 
-**What I found:**
-| Metric | Value |
+| | |
 |---|---|
 | Orders | 5,000 |
-| On-time delivery | 80.3% (983 orders late) |
-| Average freight cost | $100.14 / order |
-| Damage rate | 3.61% of units shipped |
-| Return rate | 1.63% of units shipped |
+| On time | 80.3% — 983 arrived late |
+| Average freight | $100.14 per order |
+| Units damaged | 3.61% (22,593 units) |
+| Units returned | 1.63% (10,169 units) |
 
-By supplier, damage rate ranges from **3.5% (AG group, best)** to **3.72%
-(Star group, worst)** — a small but consistent gap across 1,600+ orders each,
-worth investigating on the sourcing side. All three suppliers average the
-same 4-day raw-material lead time, so the damage gap isn't a lead-time issue.
+One order in five is late, which is the number people notice first. The more
+useful finding is underneath it: damage rates barely move between suppliers —
+3.50% for AG group, 3.62% for H7L, 3.72% for Star. Star is the worst of the
+three, but the whole spread is a fifth of a percentage point.
 
-**Tools:** Python (stdlib `csv`/`sqlite3`), SQL, Excel (initial exploration)
+All three run the same 4-day lead time on raw material. Same speed, near-identical
+damage. That rules out "one bad supplier" and points at something shared —
+handling or packaging in transit — which is the cheaper problem to have.
 
-## Run it yourself
+## What I did
+
+Three raw tables: order details, order status, suppliers. `backend/etl.py` loads
+them into SQLite and runs the queries for on-time rate, freight, damage and
+returns, overall and per supplier. Standard library only, so it runs anywhere
+Python does.
+
+Most of the actual work was reconciling the three tables — order status and
+order details don't line up one-to-one, and the join has to be right before any
+percentage means anything.
+
+## Run it
 
 ```bash
 python backend/etl.py
 ```
 
-No dependencies — pure Python standard library.
+Prints every number in the table above.
 
 ## Files
 
 ```
-data/            the 3 raw CSVs (order details, order status, suppliers)
-backend/etl.py   loads the CSVs into SQLite and prints the KPIs above
+data/         the three raw CSVs
+backend/etl.py   loads them into SQLite and prints the results
 ```
 
+## Tools
+
+Python, SQLite, SQL, Excel
+
 ---
-Rakan Ahmed Al-Nusayri · [portfolio](https://github.com/RaKaN-DaTa) · rakanalnsyry8@gmail.com
+Rakan Ahmed Al-Nusayri — [github.com/RaKaN-DaTa](https://github.com/RaKaN-DaTa)
