@@ -44,8 +44,9 @@ they run as-is.
 ## Files
 
 ```
-data/         the three raw CSVs
-queries.sql   the SQL behind every number here
+data/                          the three raw CSVs
+queries.sql                    the SQL behind every number here
+supply-chain-dashboard.xlsx    an interactive Excel dashboard over the same data
 ```
 
 ## Tools
